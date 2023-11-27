@@ -2,25 +2,26 @@
 #include <assert.h>
 #include "../hashmap.h" //replace it to your header dir
 
-defineMap(char, int);
-defineMap(int, char);
+typedef const char* string;
 
+defineMap(int, char);
+defineMap(string, int);
 
 int main(){
+    Map(string, int) map1 = new_map(string, int);
+    map_insert(map1,"a", 10);
+    map_count(map1);
+    map_find(map1, "a");
+    map_erase(map1, "a");
+    map_clear(map1);
+    map_size(map1);
 
-    Map(char, int) map1 = new_map(char, int);
-    map1.insert(&map1,'a', 10);
-    map1.erase(&map1,'a');
-    map1.clear(&map1);
+    Map(string, int) map2 = new_map(string, int);
+    map_swap(map1, map2);
 
-    map_insert(map1,'a', 10);
+    Map(int, char) map3 = new_map(int, char);
 
-    Map(int, char) map2 = new_map(int, char);
-    map2.insert(&map2,20,'b');
-    map2.erase(&map2,20);
-    map2.clear(&map2);
+    struct _Map_stringint map4 = _map_create_stringint();
 
-    Map(char, int) map3 = new_map(char, int);
-    
     return 0;
 }
