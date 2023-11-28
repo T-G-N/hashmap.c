@@ -18,6 +18,7 @@
     typedef struct _Map_##_key_type##_value_type {                                                                      \
                                                                                                                         \
         Element_##_key_type##_value_type *data;                                                                         \
+        int entities;                                                                                                   \
                                                                                                                         \
         bool (*insert)(struct _Map_##_key_type##_value_type *map, _key_type key, _value_type value);                    \
         bool (*erase)(struct _Map_##_key_type##_value_type *map, _key_type key);                                        \
@@ -33,7 +34,10 @@
                                                                                                                         \
     uint32_t _map_##_key_type##_value_type##_hash(_key_type key)                                                        \
     {                                                                                                                   \
-        /*won't work correctly for pointer and array*/                                                                  \
+        /*@todo:pointer                                                                                             */  \
+        /*      when having pointer we should know the real size of the array or the exact pointer and so it is not */  \
+        /*      possible at this instance but can be made in further version.                                       */  \
+                                                                                                                        \
         size_t keySize = sizeof(key);                                                                                   \
         uint32_t hashval = 0;                                                                                           \
         for(size_t i = 0; i < keySize; i++){                                                                            \
@@ -54,22 +58,47 @@
         while(itr->next != NULL){itr = itr->next;}                                                                      \
         itr->next = element;                                                                                            \
                                                                                                                         \
+        map->entities++;                                                                                                \
         return true;                                                                                                    \
     }                                                                                                                   \
                                                                                                                         \
     bool _map_##_key_type##_value_type##_erase(Map_##_key_type##_value_type *map, _key_type key)                        \
     {                                                                                                                   \
+        uint32_t hashval = _map_##_key_type##_value_type##_hash(key);                                                   \
+                                                                                                                        \
+        Element_##_key_type##_value_type* itr = &(map->data[hashval]);                                                  \
+        Element_##_key_type##_value_type* prev = NULL;                                                                  \
+                                                                                                                        \
+        while(itr != NULL){                                                                                             \
+            if(itr->key == key){                                                                                        \
+                Element_##_key_type##_value_type* tmp = itr;                                                            \
+                if(prev == NULL){                                                                                       \
+                    map->data[hashval] = *itr->next;                                                                    \
+                }else{                                                                                                  \
+                    prev->next = itr->next;                                                                             \
+                }                                                                                                       \
+                free(tmp);                                                                                              \
+                map->entities--;                                                                                        \
+                return true;                                                                                            \
+            }                                                                                                           \
+            prev = itr;                                                                                                 \
+            itr = itr->next;                                                                                            \
+        }                                                                                                               \
         return false;                                                                                                   \
     }                                                                                                                   \
                                                                                                                         \
     void _map_##_key_type##_value_type##_swap(Map_##_key_type##_value_type *map, Map_##_key_type##_value_type *nextMap) \
     {                                                                                                                   \
-        return;                                                                                                         \
+        Map_##_key_type##_value_type tmp = *map;                                                                        \
+        *map = *nextMap;                                                                                                \
+        *nextMap = tmp;                                                                                                 \
     }                                                                                                                   \
                                                                                                                         \
     bool _map_##_key_type##_value_type##_clear(Map_##_key_type##_value_type *map)                                       \
     {                                                                                                                   \
-        return false;                                                                                                   \
+        free(map->data);                                                                                                \
+        map->entities = 0;                                                                                              \
+        return true;                                                                                                    \
     }                                                                                                                   \
                                                                                                                         \
     _value_type* _map_##_key_type##_value_type##_find(Map_##_key_type##_value_type *map, _key_type key)                 \
@@ -85,17 +114,18 @@
                                                                                                                         \
     int _map_##_key_type##_value_type##_count(Map_##_key_type##_value_type *map)                                        \
     {                                                                                                                   \
-        return 0;                                                                                                       \
+        return map->entities;                                                                                           \
     }                                                                                                                   \
                                                                                                                         \
     size_t _map_##_key_type##_value_type##_size(Map_##_key_type##_value_type *map)                                      \
     {                                                                                                                   \
-        return (size_t)0;                                                                                               \
+        return (size_t) sizeof(Element_##_key_type##_value_type)*map->entities;                                         \
     }                                                                                                                   \
                                                                                                                         \
     Map_##_key_type##_value_type _map_create_##_key_type##_value_type()                                                 \
     {                                                                                                                   \
         Map_##_key_type##_value_type _map;                                                                              \
+        _map.entities = 0;                                                                                              \
         _map.data = (Element_##_key_type##_value_type*) calloc(INITIAL_SIZE, sizeof(Element_##_key_type##_value_type)); \
         _map.insert = _map_##_key_type##_value_type##_insert;                                                           \
         _map.erase = _map_##_key_type##_value_type##_erase;                                                             \

@@ -4,11 +4,8 @@ BIN = hashmap
 all: $(BIN)
 test: _test clean
 
-hashmap:
-	$(CC) hashmap.c -c -o build/hashmap.o
-
-_test: hashmap
-	$(CC) test/main.c -o build/main build/hashmap.o
+_test:
+	$(CC) test/main.c -o build/main
 	build/main.exe
 
 clean:

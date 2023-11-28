@@ -31,10 +31,21 @@ int main(){
     map_insert(map4, 'a', 'A');
     map_insert(map4, 'b', 'B');
     map_insert(map4, 'c', 'C');
-    printf("CHECK\n");
-    printf("%c\n", *map_find(map4, 'a'));
-    printf("%zu\n", map_find(map4, 'd'));
-    
+    printf("MAP4: %d %zu \n", map4.entities, map_size(map4));
+
+    Map(char, char) map6 = new_map(char, char);
+    map_insert(map6, '1', 'X');
+    printf("MAP6: %d %zu \n", map6.entities, map_size(map6));
+
+    map_swap(map4, map6);
+
+    printf("MAP4: %c %d %zu \n", *map_find(map4, '1'), map4.entities, map_size(map4));
+    printf("MAP6: %c %d %zu \n", *map_find(map6, 'a'), map6.entities, map_size(map6));
+
+    map_clear(map4);
+    printf("MAP4: size:%zu entityCount:%d\n", map_size(map4), map4.entities);
+
+
     // struct _Map_stringint map5 = _map_create_stringint();
 
     return 0;
