@@ -12,4 +12,4 @@ _test: hashmap
 	build/main.exe
 
 clean:
-	rm build/*.o build/*.exe -f
+	rm build/*.o build/*.exe test/*.exe -f
