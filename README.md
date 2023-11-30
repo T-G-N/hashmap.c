@@ -50,12 +50,11 @@ int main(void){
 #### Unit Test
     As For Now I Used The Test File As A Debugging File And It Should Be Changed To Unit Testing With `<Asserts.h>`.
 #### Excess Functionallity
-    Extra Functions For The `Hashmap`
-    - At()          :access specified element with bounds checking
-    - empty()       :checks whether the container is empty
-    - max_size()    :returns the maximum possible number of elements
-    - insert_range():inserts a range of elements
-    - contains()    :checks if the container contains element with specific key
+- [ ] at()          :access specified element with bounds checking
+- [x] empty()       :checks whether the container is empty
+- [ ] max_size()    :returns the maximum possible number of elements
+- [ ] insert_range():inserts a range of elements
+- [ ] contains()    :checks if the container contains element with specific key
 #### Key Comparison (==)
     `Hashmap` uses key as a unique id to access/manipulate the element and when the key type is string/struct/any... comparision
     of two key may differ according to the key type and so it should be customized by user of having their own function or any
